@@ -1,0 +1,2318 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mạng Máy Tính</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+      }
+      body {
+        background: #f0f2f5;
+        padding: 20px;
+      }
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+      header {
+        background: #2c3e50;
+        color: white;
+        padding: 20px;
+        border-radius: 10px 10px 0 0;
+      }
+      h1 {
+        font-size: 24px;
+        margin-bottom: 5px;
+      }
+      .subtitle {
+        color: #bdc3c7;
+      }
+      .stats {
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+        margin-top: 15px;
+      }
+      .stat {
+        text-align: center;
+      }
+      .stat-value {
+        font-size: 28px;
+        font-weight: bold;
+      }
+      .correct {
+        color: #27ae60;
+      }
+      .incorrect {
+        color: #e74c3c;
+      }
+      .answered {
+        color: #3498db;
+      }
+      .main-content {
+        display: flex;
+        min-height: 500px;
+      }
+      .sidebar {
+        width: 250px;
+        background: #f8f9fa;
+        border-right: 1px solid #ddd;
+        padding: 15px;
+      }
+      .quiz-area {
+        flex: 1;
+        padding: 20px;
+      }
+      .question-nav {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, 35px);
+        gap: 8px;
+        margin: 15px 0;
+      }
+      .q-btn {
+        width: 35px;
+        height: 35px;
+        border: 1px solid #ddd;
+        background: white;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      .q-btn.current {
+        background: #3498db;
+        color: white;
+      }
+      .q-btn.answered {
+        background: #2ecc71;
+        color: white;
+      }
+      .q-btn.correct {
+        background: #27ae60;
+        color: white;
+      }
+      .q-btn.incorrect {
+        background: #e74c3c;
+        color: white;
+      }
+      .question-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #eee;
+      }
+      .question-number {
+        font-size: 18px;
+        font-weight: bold;
+        color: #2c3e50;
+      }
+      .timer {
+        color: #7f8c8d;
+      }
+      .question-text {
+        font-size: 18px;
+        margin-bottom: 25px;
+        line-height: 1.5;
+      }
+      .options {
+        margin-bottom: 20px;
+      }
+      .option {
+        padding: 12px;
+        border: 2px solid #ecf0f1;
+        border-radius: 6px;
+        margin-bottom: 10px;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .option:hover {
+        background: #f8f9fa;
+      }
+      .option.selected {
+        border-color: #3498db;
+        background: #e3f2fd;
+      }
+      .option.correct-opt {
+        border-color: #27ae60;
+        background: #d4edda;
+      }
+      .option.wrong-opt {
+        border-color: #e74c3c;
+        background: #f8d7da;
+      }
+      .explanation {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 6px;
+        margin-top: 20px;
+        border-left: 4px solid #3498db;
+        display: none;
+      }
+      .explanation.show {
+        display: block;
+      }
+      .explanation h4 {
+        color: #2c3e50;
+        margin-bottom: 10px;
+      }
+      .controls {
+        display: flex;
+        gap: 10px;
+        margin-top: 15px;
+      }
+      .nav-btn {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: bold;
+      }
+      .prev-btn {
+        background: #95a5a6;
+        color: white;
+      }
+      .next-btn {
+        background: #3498db;
+        color: white;
+      }
+      .submit-btn {
+        background: #27ae60;
+        color: white;
+      }
+      .reset-btn {
+        background: #e74c3c;
+        color: white;
+      }
+      .filter {
+        margin-bottom: 15px;
+      }
+      .filter select {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+      }
+      .result-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+      }
+      .result-content {
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        max-width: 500px;
+        width: 90%;
+      }
+      .score {
+        font-size: 48px;
+        font-weight: bold;
+        color: #3498db;
+        text-align: center;
+        margin: 20px 0;
+      }
+      .result-details {
+        display: flex;
+        justify-content: space-around;
+        margin: 20px 0;
+      }
+      .modal-btns {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>Mạng Máy Tính</h1>
+        <p class="subtitle">121 câu hỏi trắc nghiệm</p>
+        <div class="stats">
+          <div class="stat">
+            <div class="stat-value correct" id="correct-count">0</div>
+            <div>Đúng</div>
+          </div>
+          <div class="stat">
+            <div class="stat-value incorrect" id="incorrect-count">0</div>
+            <div>Sai</div>
+          </div>
+          <div class="stat">
+            <div class="stat-value answered" id="answered-count">0</div>
+            <div>Đã làm</div>
+          </div>
+        </div>
+      </header>
+
+      <div class="main-content">
+        <aside class="sidebar">
+          <h3>Danh sách câu hỏi</h3>
+
+          <div class="filter">
+            <label>Chọn buổi học:</label>
+            <select id="session-select">
+              <option value="all">Tất cả các buổi</option>
+              <option value="1">Buổi 1 (Câu 1-6)</option>
+              <option value="2">Buổi 2 (Câu 7-12)</option>
+              <option value="3">Buổi 3 (Câu 13-18)</option>
+              <option value="4">Buổi 4 (Câu 19-24)</option>
+              <option value="5">Buổi 5 (Câu 25-30)</option>
+              <option value="6">Buổi 6 (Câu 31-36)</option>
+              <option value="7">Buổi 7 (Câu 37-42)</option>
+              <option value="8">Buổi 8 (Câu 43-48)</option>
+              <option value="9">Buổi 9 (Câu 49-54)</option>
+              <option value="10">Buổi 10 (Câu 55-60)</option>
+              <option value="11">Buổi 11 (Câu 61-66)</option>
+              <option value="12">Buổi 12 (Câu 67-72)</option>
+              <option value="13">Buổi 13 (Câu 73-78)</option>
+              <option value="14">Buổi 14 (Câu 79-84)</option>
+              <option value="15">Buổi 15 (Câu 85-90)</option>
+              <option value="16">Buổi 16 (Câu 91-96)</option>
+              <option value="17">Buổi 17 (Câu 97-102)</option>
+              <option value="18">Buổi 18 (Câu 103-108)</option>
+              <option value="19">Buổi 19 (Câu 109-114)</option>
+              <option value="20">Buổi 20 (Câu 115-121)</option>
+            </select>
+          </div>
+
+          <div class="question-nav" id="question-nav">
+            <!-- Nút câu hỏi sẽ được tạo bằng JS -->
+          </div>
+
+          <div class="controls">
+            <button class="nav-btn reset-btn" id="reset-btn">Làm lại</button>
+            <button class="nav-btn submit-btn" id="submit-btn">Nộp bài</button>
+          </div>
+        </aside>
+
+        <main class="quiz-area">
+          <div class="question-header">
+            <div class="question-number" id="question-number">Câu hỏi 1</div>
+            <div class="timer" id="timer">
+              Thời gian: <span id="time">00:00</span>
+            </div>
+          </div>
+
+          <div class="question-text" id="question-text">
+            <!-- Câu hỏi sẽ được thêm bằng JS -->
+          </div>
+
+          <div class="options" id="options-container">
+            <!-- Các lựa chọn sẽ được thêm bằng JS -->
+          </div>
+
+          <div class="explanation" id="explanation">
+            <h4>Giải thích</h4>
+            <p id="explanation-text"></p>
+            <p>
+              <strong
+                >Đáp án đúng: <span id="correct-answer-text"></span
+              ></strong>
+            </p>
+          </div>
+
+          <div class="controls">
+            <button class="nav-btn prev-btn" id="prev-btn">← Câu trước</button>
+            <button class="nav-btn next-btn" id="next-btn">
+              Câu tiếp theo →
+            </button>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <!-- Modal hiển thị kết quả -->
+    <div class="result-modal" id="result-modal">
+      <div class="result-content">
+        <h2>Kết quả bài kiểm tra</h2>
+        <div class="score" id="final-score">0/121</div>
+
+        <div class="result-details">
+          <div>
+            <div
+              style="color: #27ae60; font-size: 24px; font-weight: bold"
+              id="final-correct"
+            >
+              0
+            </div>
+            <div>Câu đúng</div>
+          </div>
+          <div>
+            <div
+              style="color: #e74c3c; font-size: 24px; font-weight: bold"
+              id="final-incorrect"
+            >
+              0
+            </div>
+            <div>Câu sai</div>
+          </div>
+          <div>
+            <div
+              style="color: #3498db; font-size: 24px; font-weight: bold"
+              id="final-unanswered"
+            >
+              121
+            </div>
+            <div>Chưa làm</div>
+          </div>
+        </div>
+
+        <p id="result-message"></p>
+
+        <div class="modal-btns">
+          <button class="nav-btn" id="review-btn">Xem lại bài</button>
+          <button class="nav-btn reset-btn" id="modal-restart-btn">
+            Làm lại
+          </button>
+          <button class="nav-btn" id="close-modal-btn">Đóng</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // ========== DỮ LIỆU 121 CÂU HỎI ==========
+      const questions = [
+        // Buổi 1: Câu 1-6
+        {
+          id: 1,
+          session: 1,
+          text: "Mạng máy tính là gì?",
+          options: [
+            "Hệ thống các thiết bị điện tử lưu trữ dữ liệu",
+            "Hệ thống các máy tính kết nối với nhau để trao đổi thông tin và chia sẻ tài nguyên",
+            "Hệ thống thiết bị chỉ dùng để chia sẻ internet",
+            "Hệ thống dây cáp kết nối các thiết bị ngoại vi",
+          ],
+          correctAnswer: 1,
+          explanation:
+            "Mạng máy tính là hệ thống cho phép các máy tính và thiết bị kết nối với nhau để chia sẻ tài nguyên (máy in, ổ đĩa) và trao đổi thông tin. Đây là định nghĩa cơ bản và chính xác nhất.",
+        },
+        {
+          id: 2,
+          session: 1,
+          text: "Mục đích chính của việc hình thành mạng máy tính là:",
+          options: [
+            "Chia sẻ tài nguyên, thông tin và dịch vụ",
+            "Giảm giá thành phần cứng",
+            "Tăng tốc độ máy tính cá nhân",
+            "Loại bỏ các phần mềm thương mại",
+          ],
+          correctAnswer: 0,
+          explanation:
+            "Mục đích chính của mạng máy tính là chia sẻ tài nguyên (máy in, file, ứng dụng), thông tin và các dịch vụ mạng. Các lựa chọn khác chỉ là lợi ích phụ hoặc không chính xác.",
+        },
+        {
+          id: 3,
+          session: 1,
+          text: "Mô hình OSI có bao nhiêu lớp?",
+          options: ["5", "6", "7", "8"],
+          correctAnswer: 2,
+          explanation:
+            "Mô hình OSI (Open Systems Interconnection) có 7 lớp: Physical, Data Link, Network, Transport, Session, Presentation, Application.",
+        },
+        {
+          id: 4,
+          session: 1,
+          text: "Lớp nào trong mô hình OSI chịu trách nhiệm định tuyến gói tin?",
+          options: ["Physical", "Network", "Transport", "Application"],
+          correctAnswer: 1,
+          explanation:
+            "Lớp Network (lớp 3) chịu trách nhiệm định tuyến gói tin từ nguồn đến đích thông qua các mạng khác nhau, xác định đường đi tốt nhất cho dữ liệu.",
+        },
+        {
+          id: 5,
+          session: 1,
+          text: "Mô hình TCP/IP có bao nhiêu lớp?",
+          options: ["3", "4", "5", "7"],
+          correctAnswer: 1,
+          explanation:
+            "Mô hình TCP/IP có 4 lớp: Network Interface, Internet, Transport, và Application. Đôi khi được mô tả là 5 lớp nếu tách lớp Network Interface thành Physical và Data Link.",
+        },
+        {
+          id: 6,
+          session: 1,
+          text: "Thiết bị nào được xem là 'nút' (node) trong mạng máy tính?",
+          options: [
+            "Router, Switch",
+            "Máy chủ, máy trạm",
+            "Máy in, camera IP",
+            "Tất cả các đáp án trên",
+          ],
+          correctAnswer: 3,
+          explanation:
+            "Node (nút mạng) là bất kỳ thiết bị nào có thể gửi, nhận hoặc chuyển tiếp thông tin trên mạng, bao gồm tất cả các thiết bị được liệt kê: router, switch, máy chủ, máy trạm, máy in, camera IP, và các thiết bị IoT khác.",
+        },
+        // Buổi 2: Câu 7-12
+        {
+          id: 7,
+          session: 2,
+          text: "Địa chỉ IPv4 có độ dài bao nhiêu bit?",
+          options: ["16 bit", "32 bit", "64 bit", "128 bit"],
+          correctAnswer: 1,
+          explanation:
+            "Địa chỉ IPv4 có độ dài 32 bit, thường được biểu diễn dưới dạng 4 số thập phân phân cách bởi dấu chấm (ví dụ: 192.168.1.1). Mỗi số từ 0-255, tương ứng với 8 bit.",
+        },
+        {
+          id: 8,
+          session: 2,
+          text: "Giao thức nào được sử dụng để phân giải tên miền sang địa chỉ IP?",
+          options: ["HTTP", "FTP", "DNS", "SMTP"],
+          correctAnswer: 2,
+          explanation:
+            "DNS (Domain Name System) là giao thức dùng để phân giải tên miền (ví dụ: google.com) thành địa chỉ IP (ví dụ: 142.250.185.14) và ngược lại.",
+        },
+        {
+          id: 9,
+          session: 2,
+          text: "Khái niệm 'gói tin' (packet) thuộc về:",
+          options: [
+            "Truyền dữ liệu dạng sóng vô tuyến",
+            "Đơn vị dữ liệu cơ bản trong mạng chuyển mạch gói",
+            "Định danh phần cứng của thiết bị mạng",
+            "Địa chỉ lớp ứng dụng của thiết bị",
+          ],
+          correctAnswer: 1,
+          explanation:
+            "Packet (gói tin) là đơn vị dữ liệu cơ bản được truyền qua mạng trong mô hình chuyển mạch gói (packet switching). Mỗi packet chứa header (thông tin điều khiển) và payload (dữ liệu thực).",
+        },
+        {
+          id: 10,
+          session: 2,
+          text: "Phương thức 'packet switching' ra đời nhằm khắc phục hạn chế gì của 'circuit switching'?",
+          options: [
+            "Không hỗ trợ truyền dữ liệu số",
+            "Chi phí đường truyền cao và lãng phí tài nguyên khi kênh nhàn rỗi",
+            "Không có khả năng kết nối nhiều mạng",
+            "Không hỗ trợ bảo mật",
+          ],
+          correctAnswer: 1,
+          explanation:
+            "Packet switching khắc phục hạn chế của circuit switching là lãng phí tài nguyên khi kênh truyền bị chiếm giữ nhưng không truyền dữ liệu (idle time). Packet switching cho phép nhiều kết nối chia sẻ cùng một đường truyền.",
+        },
+        {
+          id: 11,
+          session: 2,
+          text: "Điểm khác biệt chính giữa mô hình OSI và TCP/IP là gì?",
+          options: [
+            "OSI có 7 lớp, TCP/IP có 5 lớp",
+            "TCP/IP có nhiều lớp hơn OSI",
+            "Cả hai đều chỉ dùng trong mạng LAN",
+            "OSI chỉ hỗ trợ IPv4",
+          ],
+          correctAnswer: 0,
+          explanation:
+            "Mô hình OSI có 7 lớp trong khi TCP/IP thực tế có 4 lớp (đôi khi được mô tả là 5 lớp). OSI là mô hình lý thuyết, TCP/IP là mô hình thực tế được sử dụng rộng rãi.",
+        },
+        {
+          id: 12,
+          session: 2,
+          text: "Vì sao IPv6 loại bỏ nhu cầu sử dụng NAT so với IPv4?",
+          options: [
+            "IPv6 hỗ trợ tốc độ truyền dữ liệu cao hơn",
+            "IPv6 có không gian địa chỉ lớn hơn nhiều",
+            "IPv6 chỉ dùng trong mạng nội bộ",
+            "NAT không tương thích với TCP/IP",
+          ],
+          correctAnswer: 1,
+          explanation:
+            "IPv6 có không gian địa chỉ cực kỳ lớn (2^128 ≈ 3.4×10^38 địa chỉ) nên mỗi thiết bị có thể có địa chỉ public duy nhất, không cần NAT để tiết kiệm địa chỉ như IPv4.",
+        },
+        // Buổi 3: Câu 13-18
+        {
+          id: 13,
+          session: 3,
+          text: "Trong mạng máy tính, mô hình client-server có ưu điểm nào nổi bật?",
+          options: [
+            "Quản lý tập trung, dễ bảo mật và mở rộng",
+            "Không cần phần cứng mạng",
+            "Chỉ dùng được cho mạng nhỏ",
+            "Không cần cấu hình tài khoản người dùng",
+          ],
+          correctAnswer: 0,
+          explanation:
+            "Mô hình client-server có ưu điểm chính là quản lý tập trung, dễ dàng trong việc bảo mật, sao lưu, nâng cấp và mở rộng hệ thống.",
+        },
+        {
+          id: 14,
+          session: 3,
+          text: "Khi so sánh OSI với TCP/IP, mô hình OSI được đánh giá:",
+          options: [
+            "Chi tiết hơn, mang tính học thuật và chuẩn hóa cao",
+            "Đơn giản hơn, phù hợp triển khai thực tế",
+            "Không còn được sử dụng hiện nay",
+            "Không hỗ trợ các giao thức phổ biến",
+          ],
+          correctAnswer: 0,
+          explanation:
+            "Mô hình OSI được đánh giá chi tiết hơn, mang tính học thuật và chuẩn hóa cao, trong khi TCP/IP đơn giản hơn và được sử dụng rộng rãi trong thực tế.",
+        },
+        {
+          id: 15,
+          session: 3,
+          text: "Nguyên nhân chính dẫn đến sự cạn kiệt địa chỉ IPv4 là:",
+          options: [
+            "Dung lượng bộ nhớ hạn chế",
+            "Nhu cầu kết nối tăng mạnh, đặc biệt từ các thiết bị IoT",
+            "IPv4 không tương thích với hệ điều hành mới",
+            "IPv4 không hỗ trợ truyền dữ liệu video",
+          ],
+          correctAnswer: 1,
+          explanation:
+            "Nguyên nhân chính là sự bùng nổ của Internet và sự gia tăng mạnh mẽ số lượng thiết bị kết nối, đặc biệt là các thiết bị IoT (Internet of Things).",
+        },
+        {
+          id: 16,
+          session: 3,
+          text: "Ưu điểm của phương thức packet switching là gì?",
+          options: [
+            "Dữ liệu truyền theo kênh cố định",
+            "Tận dụng hiệu quả tài nguyên mạng nhờ ghép kênh thống kê",
+            "Bảo mật cao mà không cần mã hóa",
+            "Chỉ truyền được dữ liệu văn bản",
+          ],
+          correctAnswer: 1,
+          explanation:
+            "Packet switching tận dụng hiệu quả tài nguyên mạng nhờ ghép kênh thống kê (statistical multiplexing), cho phép nhiều kết nối chia sẻ cùng băng thông.",
+        },
+        {
+          id: 17,
+          session: 3,
+          text: "Lớp vận chuyển (Transport) trong mô hình OSI có nhiệm vụ chính là:",
+          options: [
+            "Định tuyến gói tin đến đích",
+            "Cấp phát địa chỉ IP",
+            "Quản lý giao thức ứng dụng",
+            "Đảm bảo truyền dữ liệu tin cậy, kiểm soát lỗi và luồng",
+          ],
+          correctAnswer: 3,
+          explanation:
+            "Lớp Transport (lớp 4) đảm bảo truyền dữ liệu tin cậy, kiểm soát lỗi, điều khiển luồng và phân mảnh/phục hồi dữ liệu.",
+        },
+        {
+          id: 18,
+          session: 3,
+          text: "Lợi ích chính của việc tích hợp IPsec trong IPv6 là:",
+          options: [
+            "Tăng dung lượng gói tin",
+            "Hỗ trợ bảo mật với xác thực và mã hóa dữ liệu",
+            "Tăng tốc độ truy cập web",
+            "Giảm chi phí phần cứng mạng",
+          ],
+          correctAnswer: 1,
+          explanation:
+            "IPsec được tích hợp sẵn trong IPv6, cung cấp bảo mật end-to-end với xác thực và mã hóa dữ liệu, không cần cấu hình thêm như trong IPv4.",
+        },
+        // Buổi 4: Câu 19-24
+        {
+          id: 19,
+          session: 4,
+          text: "Vì sao mô hình mạng 'peer-to-peer' ít được dùng trong doanh nghiệp lớn?",
+          options: [
+            "Chi phí triển khai cao",
+            "Không đảm bảo an toàn và khó quản lý tập trung",
+            "Không hỗ trợ kết nối Internet",
+            "Không thể chia sẻ dữ liệu",
+          ],
+          correctAnswer: 1,
+          explanation:
+            "Mô hình peer-to-peer thiếu tính tập trung, khó quản lý, bảo mật và kiểm soát truy cập, không phù hợp với môi trường doanh nghiệp lớn cần quản lý chặt chẽ.",
+        },
+        {
+          id: 20,
+          session: 4,
+          text: "Khi so sánh IPv4 và IPv6, cải tiến nào của IPv6 giúp tối ưu xử lý của router?",
+          options: [
+            "Header đơn giản hơn, số trường ít và kích thước cố định",
+            "Không cần gán địa chỉ MAC cho thiết bị",
+            "Không yêu cầu cấu hình DNS",
+            "Tự động kiểm soát băng thông",
+          ],
+          correctAnswer: 0,
+          explanation:
+            "IPv6 có header đơn giản hơn với kích thước cố định 40 byte (so với 20-60 byte của IPv4), ít trường hơn, giúp router xử lý nhanh hơn.",
+        },
+        {
+          id: 21,
+          session: 4,
+          text: "Chức năng chính của card mạng (NIC) là gì?",
+          options: [
+            "Lưu trữ dữ liệu mạng",
+            "Chuyển đổi dữ liệu số thành tín hiệu để truyền qua môi trường mạng",
+            "Cung cấp điện cho các thiết bị mạng",
+            "Định tuyến gói tin giữa các mạng",
+          ],
+          correctAnswer: 1,
+          explanation:
+            "NIC (Network Interface Card) có chức năng chính là chuyển đổi dữ liệu số từ máy tính thành tín hiệu phù hợp với môi trường mạng (đồng, quang, không dây) và ngược lại.",
+        },
+        {
+          id: 22,
+          session: 4,
+          text: "Ưu điểm chính của Switch Layer 2 so với Repeater là gì?",
+          options: [
+            "Tăng băng thông bằng cách chia mạng thành nhiều miền xung đột",
+            "Giảm độ trễ khi truyền dữ liệu đường dài",
+            "Cung cấp khả năng mã hóa dữ liệu ở tầng vận chuyển",
+            "Thay thế hoàn toàn vai trò của Router trong mạng WAN",
+          ],
+          correctAnswer: 0,
+          explanation:
+            "Switch Layer 2 chia mạng thành nhiều collision domain (miền xung đột), giảm xung đột và tăng băng thông hiệu dụng, trong khi Repeater chỉ khuếch đại tín hiệu.",
+        },
+        {
+          id: 23,
+          session: 4,
+          text: "Điểm khác biệt cơ bản giữa Switch và Hub là gì?",
+          options: [
+            "Switch có thể định tuyến gói tin thông minh, Hub chỉ phát sóng dữ liệu đến tất cả các cổng",
+            "Switch chỉ hoạt động ở lớp vật lý, Hub ở lớp liên kết dữ liệu",
+            "Switch rẻ hơn Hub",
+            "Switch không thể quản lý VLAN",
+          ],
+          correctAnswer: 0,
+          explanation:
+            "Switch hoạt động ở Layer 2, học địa chỉ MAC và chuyển tiếp frame đến đúng cổng, trong khi Hub hoạt động ở Layer 1, chỉ khuếch đại và phát tín hiệu đến tất cả các cổng.",
+        },
+        {
+          id: 24,
+          session: 4,
+          text: "Router có vai trò chính trong mạng là gì?",
+          options: [
+            "Chia sẻ máy in trong mạng LAN",
+            "Định tuyến gói tin giữa các mạng và kết nối Internet",
+            "Khuếch đại tín hiệu mạng để truyền xa hơn",
+            "Lọc các gói tin quảng cáo",
+          ],
+          correctAnswer: 1,
+          explanation:
+            "Router hoạt động ở Layer 3, có vai trò chính là định tuyến gói tin giữa các mạng khác nhau (inter-network) và kết nối mạng nội bộ với Internet.",
+        },
+        // Buổi 5: Câu 25-30
+        {
+          id: 25,
+          session: 5,
+          text: "Môi trường truyền dẫn quang (cáp quang) có ưu điểm nào nổi bật nhất?",
+          options: [
+            "Chi phí thấp hơn cáp đồng",
+            "Băng thông cao, tốc độ truyền nhanh, ít nhiễu",
+            "Dễ bấm đầu dây và triển khai",
+            "Không cần bảo trì định kỳ",
+          ],
+          correctAnswer: 1,
+          explanation:
+            "Cáp quang có ưu điểm nổi bật là băng thông cao (hàng Gbps đến Tbps), tốc độ truyền nhanh, ít bị nhiễu điện từ và suy hao thấp trên khoảng cách xa.",
+        },
+        {
+          id: 26,
+          session: 5,
+          text: "Trong định tuyến động, ưu điểm nổi bật của OSPF so với RIP là:",
+          options: [
+            "Sử dụng UDP thay vì TCP",
+            "Không cần cấu hình area",
+            "Hỗ trợ hop-count không giới hạn và hội tụ nhanh",
+            "Hỗ trợ NAT tự động",
+          ],
+          correctAnswer: 2,
+          explanation:
+            "OSPF hỗ trợ hop-count không giới hạn (RIP giới hạn 15 hop), sử dụng thuật toán Link-State cho tốc độ hội tụ nhanh hơn và hỗ trợ VLSM.",
+        },
+        {
+          id: 27,
+          session: 5,
+          text: "Khi lập kế hoạch IP cho một doanh nghiệp với nhiều chi nhánh, kỹ thuật nào giúp quản lý hiệu quả và tiết kiệm địa chỉ nhất?",
+          options: [
+            "Dùng duy nhất một dải /16 cho tất cả chi nhánh",
+            "Gán địa chỉ IP tĩnh thủ công cho từng thiết bị",
+            "Tắt DHCP tại tất cả site",
+            "VLSM (Variable Length Subnet Mask)",
+          ],
+          correctAnswer: 3,
+          explanation:
+            "VLSM (Variable Length Subnet Mask) cho phép chia subnet với subnet mask có độ dài khác nhau, giúp tối ưu hóa việc sử dụng địa chỉ IP và quản lý hiệu quả.",
+        },
+        {
+          id: 28,
+          session: 5,
+          text: "Khi tối ưu mạng LAN lớn với hơn 300 thiết bị, yếu tố quan trọng nhất cần xem xét là:",
+          options: [
+            "Thiết kế phân lớp mạng và sử dụng VLAN để giảm broadcast domain",
+            "Dùng duy nhất một switch để tiết kiệm chi phí",
+            "Đổi toàn bộ thiết bị sang IPv6",
+            "Tắt dịch vụ DHCP để tránh xung đột",
+          ],
+          correctAnswer: 0,
+          explanation:
+            "Với mạng lớn, cần thiết kế phân lớp (Core, Distribution, Access) và sử dụng VLAN để chia nhỏ broadcast domain, tăng hiệu năng và bảo mật.",
+        },
+        {
+          id: 29,
+          session: 5,
+          text: "Doanh nghiệp cần kết nối 50 máy tính trong một tòa nhà. Thiết bị nào phù hợp nhất để quản lý kết nối nội bộ?",
+          options: ["Hub", "Switch", "Modem", "Firewall"],
+          correctAnswer: 1,
+          explanation:
+            "Switch là thiết bị phù hợp nhất để kết nối nhiều máy tính trong mạng LAN, cung cấp băng thông riêng cho từng cổng và quản lý lưu lượng hiệu quả.",
+        },
+        {
+          id: 30,
+          session: 5,
+          text: "Một hệ thống WAN có nhiều site cần kết nối ổn định và bảo mật. Giải pháp nào được đánh giá là hiệu quả nhất hiện nay?",
+          options: [
+            "SD-WAN kết hợp VPN",
+            "Chỉ sử dụng RIP v2",
+            "Chuyển toàn bộ site sang địa chỉ IPv6",
+            "Dùng ICMP để định tuyến động",
+          ],
+          correctAnswer: 0,
+          explanation:
+            "SD-WAN (Software-Defined WAN) kết hợp VPN cung cấp kết nối ổn định, bảo mật, linh hoạt và tiết kiệm chi phí so với các giải pháp WAN truyền thống.",
+        },
+        // Buổi 6: Câu 31-36
+        {
+          id: 31,
+          session: 6,
+          text: "Mạng không dây 802.11ac có tốc độ tối đa khoảng bao nhiêu?",
+          options: ["54 Mbps", "300 Mbps", "1.3 Gbps", "6.9 Gbps"],
+          correctAnswer: 2,
+          explanation:
+            "802.11ac (Wi-Fi 5) hỗ trợ tốc độ lý thuyết lên đến 1.3 Gbps trên băng tần 5 GHz, sử dụng công nghệ MU-MIMO và channel bonding.",
+        },
+        {
+          id: 32,
+          session: 6,
+          text: "Khi triển khai hệ thống giám sát camera IP với nhiều thiết bị, cần đảm bảo tốc độ truyền ổn định và ít nhiễu. Nên chọn loại cáp nào?",
+          options: [
+            "Cáp đồng UTP Cat5",
+            "Cáp quang",
+            "Cáp đồng xoắn đôi loại Cat3",
+            "Cáp đồng đồng trục",
+          ],
+          correctAnswer: 1,
+          explanation:
+            "Cáp quang phù hợp cho hệ thống camera IP vì băng thông cao, truyền ổn định, không bị nhiễu điện từ, đặc biệt quan trọng khi truyền video chất lượng cao.",
+        },
+        {
+          id: 33,
+          session: 6,
+          text: "Một công ty cần kết nối nhiều chi nhánh ở các tỉnh khác nhau. Thiết bị nào cần thiết để định tuyến dữ liệu giữa các mạng?",
+          options: ["Switch", "Access Point", "Router", "Repeater"],
+          correctAnswer: 2,
+          explanation:
+            "Router là thiết bị cần thiết để định tuyến dữ liệu giữa các mạng khác nhau (inter-network), kết nối các chi nhánh ở các địa điểm khác nhau.",
+        },
+        {
+          id: 34,
+          session: 6,
+          text: "Một công ty triển khai mạng LAN cho phòng kế toán để truyền dữ liệu nhạy cảm. Giải pháp nào phù hợp nhất để tăng tính bảo mật?",
+          options: [
+            "Sử dụng VLAN riêng cho phòng kế toán",
+            "Tăng công suất phát của Access Point",
+            "Thay cáp mạng bằng loại Cat7 tốc độ cao",
+            "Tắt DHCP để gán IP tĩnh cho toàn bộ mạng",
+          ],
+          correctAnswer: 0,
+          explanation:
+            "Sử dụng VLAN riêng cho phòng kế toán giúp cách ly lưu lượng, kiểm soát truy cập và tăng bảo mật cho dữ liệu nhạy cảm.",
+        },
+        {
+          id: 35,
+          session: 6,
+          text: "Khi subnetting mạng 192.168.10.0/24 thành 8 mạng con bằng cách mượn bit, subnet mask thích hợp là:",
+          options: ["/26", "/27", "/28", "/29"],
+          correctAnswer: 1,
+          explanation:
+            "Để chia thành 8 mạng con cần mượn 3 bit (2^3=8). Subnet mask ban đầu /24 + 3 = /27. Mỗi mạng con có 2^(32-27)-2 = 30 host usable.",
+        },
+        {
+          id: 36,
+          session: 6,
+          text: "Trong mạng doanh nghiệp nhiều chi nhánh, nếu muốn tối ưu đường đi và giảm thời gian hội tụ khi xảy ra sự cố, cấu hình nào phù hợp nhất?",
+          options: [
+            "Sử dụng định tuyến tĩnh cho tất cả router",
+            "Kết hợp OSPF với cơ chế định tuyến dự phòng (redundancy)",
+            "Chỉ dùng RIP để đơn giản hóa quản lý",
+            "Tắt cơ chế định tuyến động và để DHCP tự động điều hướng",
+          ],
+          correctAnswer: 1,
+          explanation:
+            "Kết hợp OSPF (định tuyến động) với cơ chế dự phòng (redundancy) như HSRP/VRRP giúp tối ưu đường đi và đảm bảo khả năng phục hồi nhanh khi có sự cố.",
+        },
+        // Buổi 7: Câu 37-42
+        {
+          id: 37,
+          session: 7,
+          text: "Giao thức nào được sử dụng để mã hóa kết nối SSH?",
+          options: ["AES", "DES", "RC4", "Blowfish"],
+          correctAnswer: 0,
+          explanation:
+            "SSH thường sử dụng AES (Advanced Encryption Standard) với độ dài khóa 128, 192 hoặc 256 bit để mã hóa kết nối, đảm bảo tính bảo mật cao.",
+        },
+        {
+          id: 38,
+          session: 7,
+          text: "Một lớp học thực hành mạng cần mô phỏng các kịch bản định tuyến và VLAN. Thiết bị nào phù hợp nhất?",
+          options: [
+            "Hub và Repeater",
+            "Modem dân dụng",
+            "Access Point không dây",
+            "Switch hỗ trợ Layer 3 và Router",
+          ],
+          correctAnswer: 3,
+          explanation:
+            "Switch hỗ trợ Layer 3 có thể thực hiện định tuyến giữa các VLAN, kết hợp với Router để mô phỏng các kịch bản mạng phức tạp trong môi trường đào tạo.",
+        },
+        {
+          id: 39,
+          session: 7,
+          text: "Khi triển khai mạng LAN trong nhà xưởng có nhiều máy móc gây nhiễu điện từ, lựa chọn tốt nhất để giảm nhiễu tín hiệu là:",
+          options: [
+            "Dùng cáp đồng rẻ tiền loại Cat3",
+            "Dùng Wi-Fi thay cho mạng dây",
+            "Dùng cáp xoắn đôi có chống nhiễu (STP) hoặc cáp quang",
+            "Tăng công suất phát của Repeater",
+          ],
+          correctAnswer: 2,
+          explanation:
+            "Trong môi trường nhiều nhiễu điện từ, cáp STP (Shielded Twisted Pair) hoặc cáp quang là lựa chọn tốt nhất để đảm bảo chất lượng tín hiệu.",
+        },
+        {
+          id: 40,
+          session: 7,
+          text: "Quản trị mạng là gì?",
+          options: [
+            "Quản lý cấu hình, theo dõi, bảo trì và bảo mật hệ thống mạng",
+            "Chỉ cài đặt phần mềm mạng",
+            "Kiểm tra tốc độ đường truyền",
+            "Phát triển phần mềm quản lý tài nguyên",
+          ],
+          correctAnswer: 0,
+          explanation:
+            "Quản trị mạng bao gồm quản lý cấu hình, giám sát, bảo trì, tối ưu hóa và bảo mật hệ thống mạng để đảm bảo hoạt động ổn định.",
+        },
+        {
+          id: 41,
+          session: 7,
+          text: "Mục tiêu chính của quản trị mạng là:",
+          options: [
+            "Giảm số lượng thiết bị kết nối",
+            "Tăng chi phí đầu tư hạ tầng",
+            "Loại bỏ nhu cầu bảo trì định kỳ",
+            "Duy trì hoạt động ổn định và bảo mật của hệ thống mạng",
+          ],
+          correctAnswer: 3,
+          explanation:
+            "Mục tiêu chính của quản trị mạng là duy trì hệ thống mạng hoạt động ổn định, đáng tin cậy, hiệu quả và bảo mật.",
+        },
+        {
+          id: 42,
+          session: 7,
+          text: "'Giám sát mạng' trong quản trị mạng nhằm mục đích:",
+          options: [
+            "Phát hiện sự cố và tối ưu hiệu năng hệ thống",
+            "Chỉ đo tốc độ đường truyền",
+            "Gán địa chỉ IP thủ công cho từng thiết bị",
+            "Lưu trữ dữ liệu mạng trong cơ sở dữ liệu",
+          ],
+          correctAnswer: 0,
+          explanation:
+            "Giám sát mạng nhằm phát hiện sự cố kịp thời, theo dõi hiệu năng, phân tích xu hướng và tối ưu hóa hệ thống.",
+        },
+        // Buổi 8: Câu 43-48
+        {
+          id: 43,
+          session: 8,
+          text: "Công cụ Nagios, Zabbix, Cacti được dùng để:",
+          options: [
+            "Giám sát và cảnh báo tình trạng hệ thống mạng",
+            "Tăng băng thông đường truyền",
+            "Lọc nội dung truy cập Internet",
+            "Mã hóa dữ liệu trong máy chủ",
+          ],
+          correctAnswer: 0,
+          explanation:
+            "Nagios, Zabbix, Cacti là các công cụ giám sát mạng phổ biến, dùng để theo dõi trạng thái thiết bị, dịch vụ và gửi cảnh báo khi có sự cố.",
+        },
+        {
+          id: 44,
+          session: 8,
+          text: "Vai trò chính của tường lửa (Firewall) trong quản trị mạng là gì?",
+          options: [
+            "Cung cấp địa chỉ IP cho các máy trạm",
+            "Bảo vệ hệ thống khỏi truy cập trái phép và tấn công bên ngoài",
+            "Tối ưu tốc độ mạng",
+            "Lưu trữ nhật ký truy cập",
+          ],
+          correctAnswer: 1,
+          explanation:
+            "Firewall có vai trò chính là bảo vệ hệ thống mạng bằng cách kiểm soát lưu lượng ra/vào theo các quy tắc bảo mật đã định nghĩa.",
+        },
+        {
+          id: 45,
+          session: 8,
+          text: "Hoạt động nào dưới đây là một phần của bảo mật mạng?",
+          options: [
+            "Cập nhật giấy phép phần mềm",
+            "Tăng kích thước RAM trên máy chủ",
+            "Cấu hình VPN và mã hóa dữ liệu truyền",
+            "Nâng cấp màn hình hiển thị",
+          ],
+          correctAnswer: 2,
+          explanation:
+            "Cấu hình VPN và mã hóa dữ liệu là các biện pháp bảo mật quan trọng để bảo vệ thông tin truyền qua mạng khỏi bị đánh cắp hoặc nghe lén.",
+        },
+        {
+          id: 46,
+          session: 8,
+          text: "Khái niệm Active Directory (AD) là gì?",
+          options: [
+            "Dịch vụ của Windows Server để quản lý tài khoản, nhóm, và chính sách mạng",
+            "Phần mềm thiết kế sơ đồ mạng",
+            "Công cụ sao lưu dữ liệu hệ thống",
+            "Thiết bị định tuyến nâng cao",
+          ],
+          correctAnswer: 0,
+          explanation:
+            "Active Directory là dịch vụ thư mục của Microsoft, dùng để quản lý tập trung tài khoản người dùng, máy tính, nhóm và chính sách trong môi trường Windows.",
+        },
+        {
+          id: 47,
+          session: 8,
+          text: "Trong Active Directory (AD), thì OU (Organizational Unit) có tác dụng gì?",
+          options: [
+            "Tăng tốc độ truy xuất cơ sở dữ liệu",
+            "Lưu trữ lịch sử đăng nhập người dùng",
+            "Tạo báo cáo về dung lượng sử dụng",
+            "Phân chia cấu trúc quản lý và phân quyền trong hệ thống",
+          ],
+          correctAnswer: 3,
+          explanation:
+            "OU dùng để tổ chức các đối tượng AD (users, computers, groups) theo cấu trúc logic, áp dụng Group Policy và phân quyền quản lý.",
+        },
+        {
+          id: 48,
+          session: 8,
+          text: "Lý do quan trọng để cập nhật định kỳ hệ thống mạng là:",
+          options: [
+            "Vá các lỗ hổng bảo mật và nâng cấp hiệu năng",
+            "Tăng dung lượng lưu trữ vật lý",
+            "Giảm độ dài dây mạng",
+            "Giảm số lượng thiết bị cần giám sát",
+          ],
+          correctAnswer: 0,
+          explanation:
+            "Cập nhật định kỳ giúp vá lỗ hổng bảo mật, cải thiện hiệu năng, tính ổn định và khả năng tương thích của hệ thống.",
+        },
+        // Buổi 9: Câu 49-54
+        {
+          id: 49,
+          session: 9,
+          text: "Khắc phục sự cố mạng giúp:",
+          options: [
+            "Giảm thời gian gián đoạn dịch vụ và đảm bảo hệ thống hoạt động liên tục",
+            "Loại bỏ nhu cầu sao lưu dữ liệu",
+            "Tăng tốc độ phần mềm văn phòng",
+            "Giảm số lượng người dùng truy cập",
+          ],
+          correctAnswer: 0,
+          explanation:
+            "Khắc phục sự cố kịp thời giúp giảm thời gian downtime, đảm bảo tính liên tục của dịch vụ và duy trì năng suất làm việc.",
+        },
+        {
+          id: 50,
+          session: 9,
+          text: "Doanh nghiệp phát hiện nhiều lần truy cập trái phép vào hệ thống. Biện pháp đầu tiên nên thực hiện là:",
+          options: [
+            "Thay dây mạng cũ",
+            "Cấu hình lại tường lửa và đổi mật khẩu quản trị",
+            "Gỡ bỏ tất cả phần mềm diệt virus",
+            "Giảm số lượng máy trạm kết nối",
+          ],
+          correctAnswer: 1,
+          explanation:
+            "Khi phát hiện truy cập trái phép, cần ngay lập tức tăng cường bảo mật: cấu hình lại firewall, đổi mật khẩu mạnh, kiểm tra log để xác định nguồn tấn công.",
+        },
+        {
+          id: 51,
+          session: 9,
+          text: "Bạn được giao nhiệm vụ theo dõi tình trạng máy chủ. Công cụ nào phù hợp nhất?",
+          options: [
+            "Zabbix hoặc Nagios",
+            "Excel",
+            "Trình duyệt web",
+            "Trình phát video",
+          ],
+          correctAnswer: 0,
+          explanation:
+            "Zabbix và Nagios là các công cụ giám sát chuyên nghiệp, có thể theo dõi tình trạng máy chủ (CPU, RAM, disk, dịch vụ) và gửi cảnh báo tự động.",
+        },
+        {
+          id: 52,
+          session: 9,
+          text: "Một người dùng quên mật khẩu đăng nhập mạng nội bộ. Hành động nào đúng trong quản trị Active Directory (AD)?",
+          options: [
+            "Xóa hoàn toàn tài khoản và tạo lại từ đầu",
+            "Cấu hình lại router",
+            "Thay đổi dây mạng kết nối",
+            "Đặt lại mật khẩu trong Active Directory Users and Computers",
+          ],
+          correctAnswer: 3,
+          explanation:
+            "Trong AD, quản trị viên có thể reset mật khẩu cho người dùng thông qua công cụ Active Directory Users and Computers mà không cần biết mật khẩu cũ.",
+        },
+        {
+          id: 53,
+          session: 9,
+          text: "Khi hệ thống mạng bị chậm bất thường, bước đầu tiên bạn nên thực hiện là:",
+          options: [
+            "Kiểm tra tải băng thông và log hệ thống",
+            "Thay toàn bộ dây cáp mạng",
+            "Tắt tường lửa",
+            "Cập nhật phiên bản trình duyệt",
+          ],
+          correctAnswer: 0,
+          explanation:
+            "Khi mạng chậm, cần phân tích nguyên nhân: kiểm tra băng thông, log hệ thống, xác định ứng dụng/thiết bị tiêu thụ nhiều tài nguyên trước khi thực hiện các biện pháp khác.",
+        },
+        {
+          id: 54,
+          session: 9,
+          text: "Một nhân viên mới cần quyền truy cập thư mục chia sẻ. Quản trị viên nên làm gì?",
+          options: [
+            "Gán tài khoản người dùng vào nhóm có quyền phù hợp trong Active Directory (AD)",
+            "Cấp quyền truy cập cho tất cả người dùng",
+            "Tắt tính năng bảo mật của thư mục",
+            "Di chuyển dữ liệu ra ngoài hệ thống",
+          ],
+          correctAnswer: 0,
+          explanation:
+            "Cách quản lý quyền hiệu quả nhất là gán user vào security group trong AD, sau đó cấp quyền cho group trên thư mục chia sẻ, giúp quản lý tập trung và nhất quán.",
+        },
+        // Buổi 10: Câu 55-60
+        {
+          id: 55,
+          session: 10,
+          text: "Khi một máy chủ bị lỗi phần cứng, bước xử lý phù hợp là:",
+          options: [
+            "Cài lại toàn bộ hệ điều hành từ đầu",
+            "Chuyển dịch vụ sang máy chủ dự phòng và khôi phục dữ liệu từ bản sao lưu",
+            "Ngắt kết nối mạng vĩnh viễn",
+            "Tắt các phần mềm diệt virus để giảm tải",
+          ],
+          correctAnswer: 1,
+          explanation:
+            "Khi máy chủ chính bị lỗi, cần chuyển dịch vụ sang máy chủ dự phòng (failover) và khôi phục dữ liệu từ backup để giảm thiểu downtime.",
+        },
+        {
+          id: 56,
+          session: 10,
+          text: "Doanh nghiệp muốn giám sát truy cập của người dùng vào hệ thống để phát hiện hành vi bất thường. Biện pháp phù hợp là:",
+          options: [
+            "Cấu hình ghi log và phân tích nhật ký truy cập",
+            "Xóa lịch sử truy cập định kỳ",
+            "Tắt chế độ ghi log để tăng hiệu suất",
+            "Chỉ dựa vào cảnh báo của hệ điều hành",
+          ],
+          correctAnswer: 0,
+          explanation:
+            "Cấu hình logging chi tiết và sử dụng công cụ phân tích log (như SIEM) giúp phát hiện hành vi bất thường, tấn công và tuân thủ chính sách bảo mật.",
+        },
+        {
+          id: 57,
+          session: 10,
+          text: "Trong quá trình giám sát bằng Packet Tracer, khi phát hiện broadcast storm trong mạng LAN, hành động phù hợp nhất là:",
+          options: [
+            "Cấu hình Spanning Tree Protocol trên switch",
+            "Tắt dịch vụ DHCP trên router",
+            "Gán IP tĩnh cho tất cả máy trạm",
+            "Đổi địa chỉ MAC của switch",
+          ],
+          correctAnswer: 0,
+          explanation:
+            "Spanning Tree Protocol (STP) ngăn chặn broadcast storm bằng cách tạo cây khung (spanning tree), khóa các đường dẫn dư thừa để tránh vòng lặp (loop) trong mạng.",
+        },
+        {
+          id: 58,
+          session: 10,
+          text: "Khi quản lý nhiều chi nhánh, giải pháp nào giúp dễ dàng quản trị người dùng và tài nguyên?",
+          options: [
+            "Thiết lập từng tài khoản riêng lẻ trên từng máy",
+            "Cho phép tất cả truy cập mà không cần đăng nhập",
+            "Sử dụng Active Directory để quản lý tập trung",
+            "Dùng USB để chia sẻ dữ liệu thủ công",
+          ],
+          correctAnswer: 2,
+          explanation:
+            "Active Directory với Multi-site replication cho phép quản lý tập trung người dùng, nhóm, chính sách trên toàn bộ chi nhánh, giảm công sức quản trị và tăng tính nhất quán.",
+        },
+        {
+          id: 59,
+          session: 10,
+          text: "Một nhóm nhân viên bị giới hạn băng thông do hệ thống quá tải. Giải pháp phù hợp là:",
+          options: [
+            "Tắt dịch vụ VPN",
+            "Ngắt kết nối Internet trong giờ cao điểm",
+            "Cập nhật hệ điều hành máy trạm",
+            "Phân bổ băng thông hợp lý bằng công cụ quản lý mạng",
+          ],
+          correctAnswer: 3,
+          explanation:
+            "Sử dụng QoS (Quality of Service) hoặc công cụ quản lý băng thông giúp ưu tiên lưu lượng quan trọng, giới hạn băng thông cho ứng dụng không thiết yếu, đảm bảo công bằng và hiệu quả.",
+        },
+        {
+          id: 60,
+          session: 10,
+          text: "Giao thức DHCP có chức năng chính là gì?",
+          options: [
+            "Cấp phát địa chỉ IP động và thông số mạng cho thiết bị",
+            "Bảo mật kết nối mạng nội bộ",
+            "Mã hóa dữ liệu truyền tải",
+            "Lọc gói tin không hợp lệ",
+          ],
+          correctAnswer: 0,
+          explanation:
+            "DHCP (Dynamic Host Configuration Protocol) tự động cấp phát địa chỉ IP, subnet mask, default gateway, DNS server cho các thiết bị trong mạng, giảm công sức cấu hình thủ công.",
+        },
+        // Buổi 11: Câu 61-66
+        {
+          id: 61,
+          session: 11,
+          text: "Khi cấu hình dịch vụ FTP trong mạng nội bộ, yêu cầu cơ bản để người dùng có thể truy cập là gì?",
+          options: [
+            "Máy chủ phải bật DHCP để phân phát IP động",
+            "Switch trong mạng phải hỗ trợ VLAN",
+            "Máy khách phải cài đặt phần mềm diệt virus",
+            "Máy chủ phải có địa chỉ IP tĩnh và mở đúng cổng dịch vụ",
+          ],
+          correctAnswer: 3,
+          explanation:
+            "Để triển khai FTP server, cần: IP tĩnh cho server, mở cổng 20/21 (FTP) hoặc chỉ cổng 21 (FTP passive mode), cấu hình user accounts và permissions.",
+        },
+        {
+          id: 62,
+          session: 11,
+          text: "Khi thiết lập địa chỉ IP tĩnh, thông tin nào sau đây không cần cấu hình?",
+          options: [
+            "Subnet Mask",
+            "Default Gateway",
+            "MAC Address",
+            "Preferred DNS",
+          ],
+          correctAnswer: 2,
+          explanation:
+            "MAC Address là địa chỉ vật lý của card mạng, được nhà sản xuất gán cứng, không phải thông tin cần cấu hình khi đặt IP tĩnh.",
+        },
+        {
+          id: 63,
+          session: 11,
+          text: "Dịch vụ TFTP (Trivial File Transfer Protocol) thường được sử dụng để làm gì trong quản trị mạng?",
+          options: [
+            "Truyền tải các tệp cấu hình hoặc firmware cho thiết bị mạng",
+            "Giám sát hiệu suất hệ thống mạng",
+            "Tạo VLAN trên Switch Layer 3",
+            "Cấp phát địa chỉ IP cho máy khách",
+          ],
+          correctAnswer: 0,
+          explanation:
+            "TFTP thường dùng để upload/download cấu hình, firmware, IOS image cho các thiết bị mạng (router, switch) vì giao thức đơn giản, không cần xác thực.",
+        },
+        {
+          id: 64,
+          session: 11,
+          text: "Dịch vụ Routing and Remote Access chủ yếu dùng để:",
+          options: [
+            "Cấp phát chứng chỉ bảo mật",
+            "Định tuyến dữ liệu và hỗ trợ truy cập từ xa",
+            "Quản lý cơ sở dữ liệu tập trung",
+            "Kiểm soát thiết bị ngoại vi",
+          ],
+          correctAnswer: 1,
+          explanation:
+            "RRAS (Routing and Remote Access Service) trên Windows Server cung cấp chức năng định tuyến mạng (như router) và hỗ trợ kết nối từ xa qua VPN.",
+        },
+        {
+          id: 65,
+          session: 11,
+          text: "Trong mạng doanh nghiệp nhiều VLAN, để cấp phát IP tự động cho các máy ở các VLAN khác nhau, quản trị viên cần cấu hình:",
+          options: [
+            "DHCP relay trên router hoặc switch layer 3",
+            "NAT trên firewall để chia IP công cộng",
+            "Địa chỉ tĩnh trên tất cả các máy trạm",
+            "DNS forwarding để phân giải IP",
+          ],
+          correctAnswer: 0,
+          explanation:
+            "DHCP relay (ip helper-address) chuyển tiếp DHCP request từ client sang DHCP server ở VLAN khác, cho phép một DHCP server phục vụ nhiều VLAN.",
+        },
+        {
+          id: 66,
+          session: 11,
+          text: "Khi cấu hình DNS, mục tiêu quan trọng nhất là:",
+          options: [
+            "Tăng băng thông của đường truyền",
+            "Đảm bảo tên miền nội bộ phân giải chính xác đến IP máy chủ",
+            "Giảm chi phí phần cứng mạng",
+            "Đặt mật khẩu mạnh cho router",
+          ],
+          correctAnswer: 1,
+          explanation:
+            "DNS server nội bộ cần phân giải chính xác tên miền nội bộ (VD: server1.congty.local) đến IP tương ứng, đồng thời forward các query ra ngoài Internet.",
+        },
+        // Buổi 12: Câu 67-72
+        {
+          id: 67,
+          session: 12,
+          text: "Lợi ích chính của việc dùng địa chỉ IP tĩnh trên máy chủ là:",
+          options: [
+            "Giữ địa chỉ không thay đổi để dịch vụ mạng hoạt động ổn định",
+            "Giảm nguy cơ bị tấn công mạng",
+            "Tiết kiệm dung lượng lưu trữ",
+            "Tăng tốc độ mạng không dây",
+          ],
+          correctAnswer: 0,
+          explanation:
+            "Máy chủ cần IP tĩnh để client có thể kết nối ổn định, đặc biệt các dịch vụ như web server, file server, DNS server, database server.",
+        },
+        {
+          id: 68,
+          session: 12,
+          text: "Máy khách trong mạng không nhận được địa chỉ IP động. Bước xử lý đầu tiên nên là:",
+          options: [
+            "Kiểm tra hoạt động của dịch vụ DHCP trên máy chủ",
+            "Thay dây cáp mạng",
+            "Tắt tường lửa trên máy khách",
+            "Gán thủ công địa chỉ MAC",
+          ],
+          correctAnswer: 0,
+          explanation:
+            "Khi client không nhận được IP từ DHCP, cần kiểm tra: DHCP server có chạy không? Scope có IP available? Có bị firewall chặn? DHCP relay cấu hình đúng?",
+        },
+        {
+          id: 69,
+          session: 12,
+          text: "Người quản trị muốn cho phép nhân viên truy cập dữ liệu công ty từ xa một cách an toàn. Dịch vụ nào cần triển khai?",
+          options: [
+            "FTP",
+            "Routing and Remote Access kết hợp VPN",
+            "DHCP",
+            "Web Proxy",
+          ],
+          correctAnswer: 1,
+          explanation:
+            "RRAS với VPN (PPTP, L2TP/IPsec, SSTP, IKEv2) cung cấp kết nối từ xa bảo mật qua Internet, mã hóa dữ liệu và xác thực người dùng.",
+        },
+        {
+          id: 70,
+          session: 12,
+          text: "Khi cấu hình IP tĩnh, nhập sai Subnet Mask sẽ dẫn đến:",
+          options: [
+            "Thiết bị không thể giao tiếp đúng trong mạng nội bộ",
+            "Tốc độ truyền dữ liệu giảm 50%",
+            "Router tự động khởi động lại",
+            "Mất toàn bộ dữ liệu trong máy chủ",
+          ],
+          correctAnswer: 0,
+          explanation:
+            "Subnet mask sai khiến thiết bị xác định sai network ID và host ID, dẫn đến không thể giao tiếp với các thiết bị khác trong cùng mạng.",
+        },
+        {
+          id: 71,
+          session: 12,
+          text: "Doanh nghiệp cần chia sẻ file lớn giữa các phòng ban. Dịch vụ nào phù hợp nhất?",
+          options: ["DHCP server", "NTP server", "Mail server", "FTP server"],
+          correctAnswer: 3,
+          explanation:
+            "FTP server phù hợp để chia sẻ file lớn trong nội bộ, hỗ trợ resume transfer, phân quyền user, có thể kết hợp FTPS (FTP over SSL) để bảo mật.",
+        },
+        {
+          id: 72,
+          session: 12,
+          text: "Khi hệ thống DNS nội bộ không phân giải tên miền, biện pháp đầu tiên là:",
+          options: [
+            "Đổi toàn bộ dây cáp mạng",
+            "Cài đặt lại hệ điều hành máy khách",
+            "Tắt chế độ NAT trên router",
+            "Kiểm tra cấu hình DNS server và trạng thái dịch vụ",
+          ],
+          correctAnswer: 3,
+          explanation:
+            "Cần kiểm tra: DNS service có running? Zone được tạo đúng? Record được tạo? Forwarder cấu hình đúng? Client cấu hình DNS server đúng?",
+        },
+        // Buổi 13: Câu 73-78
+        {
+          id: 73,
+          session: 13,
+          text: "Một nhân viên cần địa chỉ IP cố định để cài đặt phần mềm giám sát. Giải pháp tối ưu là:",
+          options: [
+            "Cấu hình địa chỉ IP tĩnh cho thiết bị đó",
+            "Tăng dung lượng RAM cho máy chủ",
+            "Bật DHCP trên tất cả các máy khách",
+            "Cài đặt lại trình duyệt web",
+          ],
+          correctAnswer: 0,
+          explanation:
+            "Cấu hình IP tĩnh trực tiếp trên thiết bị hoặc đặt IP reservation trong DHCP server (gán IP cố định dựa trên MAC address).",
+        },
+        {
+          id: 74,
+          session: 13,
+          text: "Khi triển khai dịch vụ truy cập từ xa, yếu tố bảo mật cần ưu tiên là:",
+          options: [
+            "Tắt dịch vụ Firewall để tăng tốc kết nối",
+            "Chia sẻ tài khoản quản trị cho nhiều người dùng",
+            "Sử dụng giao thức VPN với mã hóa mạnh",
+            "Giảm độ dài mật khẩu để dễ ghi nhớ",
+          ],
+          correctAnswer: 2,
+          explanation:
+            "Nên dùng VPN protocol mạnh như IKEv2/IPsec hoặc OpenVPN với mã hóa AES-256, kết hợp xác thực 2 yếu tố (2FA) cho truy cập từ xa.",
+        },
+        {
+          id: 75,
+          session: 13,
+          text: "Nếu dịch vụ DHCP hoạt động nhưng một số máy khách không nhận được IP, bước tiếp theo nên là:",
+          options: [
+            "Kiểm tra dải IP khả dụng trong cấu hình DHCP server",
+            "Đổi vị trí lắp đặt router",
+            "Gỡ bỏ phần mềm diệt virus trên máy khách",
+            "Tắt dịch vụ DNS",
+          ],
+          correctAnswer: 0,
+          explanation:
+            "Có thể scope đã hết IP available, cần mở rộng scope hoặc giảm lease time. Cũng cần kiểm tra xem có IP conflict không.",
+        },
+        {
+          id: 76,
+          session: 13,
+          text: "Dịch vụ IIS trên Windows Server được sử dụng để:",
+          options: [
+            "Quản lý cấp phát IP động cho các máy trạm",
+            "Lưu trữ và phân phối các trang web, ứng dụng web",
+            "Định tuyến dữ liệu giữa các mạng LAN",
+            "Giám sát trạng thái đường truyền",
+          ],
+          correctAnswer: 1,
+          explanation:
+            "IIS (Internet Information Services) là web server của Microsoft, dùng để host website, web application, FTP site, và các dịch vụ web khác.",
+        },
+        {
+          id: 77,
+          session: 13,
+          text: "Giao thức FTP hoạt động trên cổng mặc định nào của TCP?",
+          options: ["20 và 21", "23 và 25", "53 và 80", "110 và 143"],
+          correctAnswer: 0,
+          explanation:
+            "FTP sử dụng cổng 21 cho control connection (lệnh) và cổng 20 cho data connection (truyền file). Trong passive mode, sử dụng cổng ngẫu nhiên cho data.",
+        },
+        {
+          id: 78,
+          session: 13,
+          text: "Trong cấu hình Web Server, tệp SSL/TLS certificate có vai trò gì?",
+          options: [
+            "Giảm băng thông tiêu thụ của ứng dụng web",
+            "Mã hóa dữ liệu truyền tải và xác thực danh tính máy chủ",
+            "Tăng tốc độ truyền dữ liệu giữa máy chủ và máy khách",
+            "Lọc lưu lượng trái phép vào máy chủ",
+          ],
+          correctAnswer: 1,
+          explanation:
+            "SSL/TLS certificate cung cấp: 1) Mã hóa dữ liệu truyền giữa client-server; 2) Xác thực danh tính server (chống giả mạo); 3) Toàn vẹn dữ liệu (chống sửa đổi).",
+        },
+        // Buổi 14: Câu 79-84
+        {
+          id: 79,
+          session: 14,
+          text: "Mail Server sử dụng giao thức SMTP để:",
+          options: [
+            "Kiểm tra quyền truy cập cơ sở dữ liệu",
+            "Gửi thư điện tử ra ngoài hệ thống",
+            "Lưu trữ hộp thư đến của người dùng",
+            "Đồng bộ tài khoản người dùng",
+          ],
+          correctAnswer: 1,
+          explanation:
+            "SMTP (Simple Mail Transfer Protocol) dùng để gửi email từ client đến server và giữa các mail server với nhau (port 25 hoặc 587 với TLS).",
+        },
+        {
+          id: 80,
+          session: 14,
+          text: "Trong một hệ thống Mail Server, giao thức IMAP được ưu tiên hơn POP3 khi:",
+          options: [
+            "Dung lượng lưu trữ máy chủ rất hạn chế",
+            "Người dùng chỉ cần tải email về thiết bị cá nhân",
+            "Người dùng muốn truy cập email từ nhiều thiết bị khác nhau",
+            "Máy chủ không hỗ trợ giao thức bảo mật SSL",
+          ],
+          correctAnswer: 2,
+          explanation:
+            "IMAP giữ email trên server, cho phép truy cập đồng bộ từ nhiều thiết bị. POP3 tải email về local và thường xóa khỏi server, chỉ phù hợp cho single device.",
+        },
+        {
+          id: 81,
+          session: 14,
+          text: "Trong một hệ thống web, vai trò chính của Web Server là gì?",
+          options: [
+            "Lưu trữ và phân phối nội dung website cho người dùng",
+            "Cấp phát địa chỉ IP động cho máy trạm",
+            "Bảo trì phần cứng mạng định kỳ",
+            "Tăng tốc độ truyền dữ liệu trong mạng LAN",
+          ],
+          correctAnswer: 0,
+          explanation:
+            "Web server (Apache, Nginx, IIS) xử lý HTTP/HTTPS request, trả về web page, image, CSS, JS file, và thực thi server-side script (PHP, ASP.NET).",
+        },
+        {
+          id: 82,
+          session: 14,
+          text: "Khi triển khai Web Server với ứng dụng có yêu cầu bảo mật cao, nên kích hoạt tính năng nào?",
+          options: [
+            "DHCP relay để cấp phát IP",
+            "ARP cache để tối ưu định tuyến",
+            "Telnet để cấu hình từ xa",
+            "HTTPS với chứng chỉ SSL hợp lệ",
+          ],
+          correctAnswer: 3,
+          explanation:
+            "HTTPS (HTTP over SSL/TLS) mã hóa toàn bộ kết nối, bảo vệ thông tin nhạy cảm (đăng nhập, thanh toán). Cần valid SSL certificate từ CA uy tín.",
+        },
+        {
+          id: 83,
+          session: 14,
+          text: "Ưu điểm của sử dụng Reverse Proxy kết hợp với Web Server là gì?",
+          options: [
+            "Cân bằng tải, tăng hiệu năng và bảo mật hệ thống",
+            "Hỗ trợ VLAN cho hệ thống mạng",
+            "Tự động đồng bộ hóa tất cả dịch vụ thư điện tử",
+            "Cấp phát IP tĩnh cho các máy trạm",
+          ],
+          correctAnswer: 0,
+          explanation:
+            "Reverse proxy (như Nginx, HAProxy) cung cấp: Load balancing, SSL termination, caching static content, compression, DDoS protection, và ẩn cấu trúc backend.",
+        },
+        {
+          id: 84,
+          session: 14,
+          text: "Khi triển khai ứng dụng web cần hỗ trợ hơn 10.000 kết nối đồng thời, giải pháp nào tối ưu nhất?",
+          options: [
+            "Dùng giao thức FTP thay thế HTTP",
+            "Vô hiệu hóa SSL để tăng tốc độ truy cập",
+            "Kích hoạt chế độ Application Pool trong IIS và sử dụng Load Balancer",
+            "Tăng dung lượng RAM trên máy trạm",
+          ],
+          correctAnswer: 2,
+          explanation:
+            "Cần: 1) Tối ưu web server (IIS Application Pool, worker processes); 2) Load balancer phân phối request; 3) Database connection pooling; 4) Caching layer (Redis, Memcached).",
+        },
+        // Buổi 15: Câu 85-90
+        {
+          id: 85,
+          session: 15,
+          text: "Khi người dùng báo không thể truy cập website qua HTTPS, bước kiểm tra đầu tiên là:",
+          options: [
+            "Đổi địa chỉ IP của Web Server",
+            "Xác thực chứng chỉ SSL còn hiệu lực và được cài đặt đúng",
+            "Tắt tường lửa của máy khách",
+            "Xóa toàn bộ lịch sử trình duyệt",
+          ],
+          correctAnswer: 1,
+          explanation:
+            "Kiểm tra: SSL certificate có expired? Certificate chain đầy đủ? Private key khớp? SAN/CN đúng domain? Cipher suites được hỗ trợ?",
+        },
+        {
+          id: 86,
+          session: 15,
+          text: "Một doanh nghiệp muốn lưu log tất cả hoạt động FTP để giám sát bảo mật. Biện pháp phù hợp là:",
+          options: [
+            "Đổi cổng FTP sang 25",
+            "Bật tính năng logging trong FTP server và lưu log định kỳ",
+            "Tăng băng thông cho máy chủ FTP",
+            "Xóa tài khoản người dùng FTP cũ",
+          ],
+          correctAnswer: 1,
+          explanation:
+            "Cần bật logging chi tiết trong FTP server, lưu log ra file hoặc gửi đến syslog server, định kỳ review log để phát hiện hành vi bất thường.",
+        },
+        {
+          id: 87,
+          session: 15,
+          text: "Để giảm nguy cơ tấn công brute-force vào Mail Server, giải pháp hợp lý là:",
+          options: [
+            "Tắt giao thức SMTP",
+            "Giới hạn số lần đăng nhập sai và kích hoạt xác thực hai yếu tố",
+            "Đổi giao thức POP3 thành FTP",
+            "Xóa toàn bộ dữ liệu trên máy chủ",
+          ],
+          correctAnswer: 1,
+          explanation:
+            "Biện pháp chống brute-force: Account lockout policy, Fail2ban, CAPTCHA, 2FA, Strong password policy, IP whitelisting/blacklisting.",
+        },
+        {
+          id: 88,
+          session: 15,
+          text: "Khi triển khai nhiều website trên cùng một máy chủ, giải pháp nào giúp phân biệt lưu lượng cho từng trang?",
+          options: [
+            "Tắt firewall để cho phép tất cả kết nối",
+            "Dùng giao thức Telnet để giám sát",
+            "Sử dụng host header hoặc cổng dịch vụ khác nhau",
+            "Cấu hình NAT tĩnh trên router",
+          ],
+          correctAnswer: 2,
+          explanation:
+            "Có thể dùng: 1) Host header (SNI cho HTTPS); 2) Different ports (8080, 8443); 3) Virtual hosts trong Apache/Nginx/IIS; 4) IP-based (nhiều IP trên server).",
+        },
+        {
+          id: 89,
+          session: 15,
+          text: "Khi hệ thống Mail Server bị liệt kê vào danh sách đen (blacklist) do spam, bước đầu tiên là:",
+          options: [
+            "Đổi toàn bộ phần cứng của hệ thống",
+            "Kiểm tra bảo mật, quét virus và đổi thông tin xác thực",
+            "Gỡ bỏ hoàn toàn dịch vụ Mail",
+            "Tắt dịch vụ DNS nội bộ",
+          ],
+          correctAnswer: 1,
+          explanation:
+            "Cần: 1) Kiểm tra server có bị compromised? 2) Quét malware; 3) Đổi password tất cả account; 4) Cấu hình SPF, DKIM, DMARC; 5) Liên hệ blacklist để delist.",
+        },
+        {
+          id: 90,
+          session: 15,
+          text: "Một website có lượng truy cập lớn bị tấn công DDoS, biện pháp nào giảm tải hiệu quả nhất?",
+          options: [
+            "Sử dụng dịch vụ CDN và Web Application Firewall (WAF)",
+            "Tăng dung lượng RAM máy trạm",
+            "Xóa chứng chỉ SSL",
+            "Tắt DNS nội bộ",
+          ],
+          correctAnswer: 0,
+          explanation:
+            "CDN (Cloudflare, Akamai) phân tán traffic, có DDoS mitigation. WAF lọc malicious traffic. Cũng có thể dùng Anycast, rate limiting, IP blacklisting.",
+        },
+        // Buổi 16: Câu 91-96
+        {
+          id: 91,
+          session: 16,
+          text: "Doanh nghiệp muốn triển khai Mail Server với khả năng bảo vệ chống spam và phishing, giải pháp phù hợp là:",
+          options: [
+            "Cài đặt bộ lọc email và sử dụng SPF, DKIM, DMARC",
+            "Giảm dung lượng hộp thư cho tất cả tài khoản",
+            "Đổi port SMTP thành port 443",
+            "Vô hiệu hóa giao thức IMAP",
+          ],
+          correctAnswer: 0,
+          explanation:
+            "Cần: 1) Spam filter (SpamAssassin); 2) SPF (xác định server được phép gửi email); 3) DKIM (ký xác thực email); 4) DMARC (policy xử lý email không xác thực).",
+        },
+        {
+          id: 92,
+          session: 16,
+          text: "Mục đích chính của việc sử dụng RAID trong lưu trữ là gì?",
+          options: [
+            "Tăng tính bảo mật của dữ liệu",
+            "Tăng tốc độ đọc/ghi và khả năng dự phòng dữ liệu",
+            "Giảm chi phí mua ổ đĩa",
+            "Tự động phân giải DNS nội bộ",
+          ],
+          correctAnswer: 1,
+          explanation:
+            "RAID (Redundant Array of Independent Disks) cung cấp: 1) Data redundancy (chịu lỗi ổ đĩa); 2) Performance improvement (striping); 3) Increased capacity.",
+        },
+        {
+          id: 93,
+          session: 16,
+          text: "RAID 1 (Mirroring) hoạt động như thế nào?",
+          options: [
+            "Ghi dữ liệu lên hai ổ đĩa giống hệt nhau để tăng khả năng dự phòng",
+            "Chia dữ liệu thành các khối và phân tán lên nhiều ổ đĩa",
+            "Mã hóa dữ liệu trước khi lưu trữ",
+            "Lưu dữ liệu lên đám mây tự động",
+          ],
+          correctAnswer: 0,
+          explanation:
+            "RAID 1 mirroring: Dữ liệu được ghi đồng thời lên 2 (hoặc nhiều) ổ đĩa giống hệt nhau. Nếu 1 ổ hỏng, dữ liệu vẫn an toàn trên ổ còn lại. Hiệu suất đọc được cải thiện.",
+        },
+        {
+          id: 94,
+          session: 16,
+          text: "Chức năng chính của File Server Resource Manager (FSRM) là:",
+          options: [
+            "Quản lý và giới hạn dung lượng lưu trữ",
+            "Giám sát tốc độ truyền dữ liệu trên mạng",
+            "Tăng tốc độ phân giải DNS",
+            "Cấp phát IP tĩnh cho các máy trạm",
+          ],
+          correctAnswer: 0,
+          explanation:
+            "FSRM trên Windows Server cung cấp: Quota management (giới hạn dung lượng), File screening (chặn file type nhất định), Storage reports, Classification management.",
+        },
+        {
+          id: 95,
+          session: 16,
+          text: "Trong quản trị mạng, sao lưu định kỳ có mục đích chính là:",
+          options: [
+            "Đảm bảo dữ liệu có thể khôi phục khi xảy ra sự cố",
+            "Giảm độ trễ truyền dữ liệu trong mạng LAN",
+            "Tăng tốc độ truy cập Internet",
+            "Đồng bộ tự động các thiết bị ngoại vi",
+          ],
+          correctAnswer: 0,
+          explanation:
+            "Backup là biện pháp cuối cùng để khôi phục dữ liệu khi xảy ra: Hardware failure, Ransomware, Human error, Natural disaster. Tuân thủ rule 3-2-1 backup.",
+        },
+        {
+          id: 96,
+          session: 16,
+          text: "Giao thức nào thường được dùng để truy cập từ xa bảo mật đến máy chủ?",
+          options: ["Telnet", "SSH", "FTP", "SMTP"],
+          correctAnswer: 1,
+          explanation:
+            "SSH (Secure Shell) mã hóa toàn bộ kết nối, dùng để remote access an toàn đến server (thay thế Telnet không mã hóa). Sử dụng port 22, hỗ trợ key-based authentication.",
+        },
+        // Buổi 17: Câu 97-102
+        {
+          id: 97,
+          session: 17,
+          text: "Công cụ Zabbix trong giám sát mạng có chức năng chính gì?",
+          options: [
+            "Theo dõi hiệu suất hệ thống và cảnh báo khi có sự cố",
+            "Phân giải tên miền nội bộ",
+            "Sao lưu cơ sở dữ liệu tự động",
+            "Tăng băng thông đường truyền",
+          ],
+          correctAnswer: 0,
+          explanation:
+            "Zabbix là monitoring solution mã nguồn mở: Monitor servers, network devices, applications; Collect metrics; Visualize data; Send alerts via email/SMS; Support templates, auto-discovery.",
+        },
+        {
+          id: 98,
+          session: 17,
+          text: "Khi một ổ đĩa trong hệ thống RAID 5 bị hỏng, bước xử lý đúng để tránh mất dữ liệu là:",
+          options: [
+            "Xóa toàn bộ dữ liệu để tạo mảng mới",
+            "Tắt RAID controller và dùng chế độ single disk",
+            "Thay ổ đĩa hỏng và tiến hành rebuild mảng RAID",
+            "Chỉ khởi động lại máy chủ để đồng bộ lại",
+          ],
+          correctAnswer: 2,
+          explanation:
+            "Với RAID 5 (striping with parity), khi 1 drive fails: 1) Thay drive hỏng bằng drive mới cùng specs; 2) RAID controller sẽ rebuild array từ parity data; 3) Trong lúc rebuild, array ở degraded mode.",
+        },
+        {
+          id: 99,
+          session: 17,
+          text: "Tính năng chính của Nagios khi giám sát hệ thống là:",
+          options: [
+            "Cấp phát địa chỉ IP động cho các máy trạm",
+            "Lưu trữ nhật ký truy cập Internet",
+            "Tăng tốc độ xử lý trên router",
+            "Giám sát, ghi nhận và cảnh báo tình trạng thiết bị mạng, máy chủ",
+          ],
+          correctAnswer: 3,
+          explanation:
+            "Nagios là monitoring tool phổ biến: Monitor host & service availability; Performance metrics; Send notifications; Web interface; Plugin architecture cho nhiều loại check.",
+        },
+        {
+          id: 100,
+          session: 17,
+          text: "Khi hệ thống báo lỗi ổ đĩa trong mảng RAID 1, hành động đúng là:",
+          options: [
+            "Xóa toàn bộ dữ liệu để khởi tạo mảng mới",
+            "Thay ổ đĩa lỗi và đồng bộ lại dữ liệu để đảm bảo dự phòng",
+            "Ngắt kết nối tất cả thiết bị mạng",
+            "Tắt dịch vụ DNS để tránh xung đột",
+          ],
+          correctAnswer: 1,
+          explanation:
+            "Với RAID 1 mirroring: 1) Thay drive hỏng; 2) Array sẽ tự động resync/mirror data từ drive còn lại sang drive mới; 3) Trong lúc resync, array vẫn hoạt động bình thường.",
+        },
+        {
+          id: 101,
+          session: 17,
+          text: "Khi máy chủ file đầy dung lượng, biện pháp đầu tiên nên thực hiện là:",
+          options: [
+            "Sử dụng FSRM để kiểm tra và giới hạn dung lượng theo nhóm",
+            "Đổi toàn bộ hệ điều hành máy chủ",
+            "Tắt dịch vụ DHCP",
+            "Giảm tốc độ truyền dữ liệu trong mạng LAN",
+          ],
+          correctAnswer: 0,
+          explanation:
+            "FSRM giúp: 1) Identify space usage (largest files, file types); 2) Implement quotas; 3) Clean up temp files, old backups; 4) Send alerts when thresholds exceeded.",
+        },
+        {
+          id: 102,
+          session: 17,
+          text: "Một nhân viên vô tình xóa dữ liệu quan trọng. Hành động khôi phục hợp lý là:",
+          options: [
+            "Cấu hình lại firewall",
+            "Đổi mật khẩu Wi-Fi nội bộ",
+            "Dùng bản sao lưu gần nhất để phục hồi dữ liệu",
+            "Tắt dịch vụ FTP trên máy chủ",
+          ],
+          correctAnswer: 2,
+          explanation:
+            "Khôi phục từ backup là cách duy nhất khi dữ liệu bị xóa. Cần: 1) Xác định file cần restore; 2) Chọn backup version gần nhất; 3) Restore to original location hoặc alternate location.",
+        },
+        // Buổi 18: Câu 103-108
+        {
+          id: 103,
+          session: 18,
+          text: "Khi phát hiện hiệu suất hệ thống giảm đột ngột, bước xử lý đầu tiên là:",
+          options: [
+            "Kiểm tra log cảnh báo từ công cụ giám sát như Zabbix hoặc Nagios",
+            "Xóa toàn bộ dữ liệu để giải phóng bộ nhớ",
+            "Tắt toàn bộ dịch vụ trên máy chủ",
+            "Thay đổi toàn bộ địa chỉ IP trong hệ thống",
+          ],
+          correctAnswer: 0,
+          explanation:
+            "Monitoring tools cung cấp real-time metrics: CPU, memory, disk I/O, network bandwidth. Logs chỉ ra nguyên nhân: high load process, network congestion, disk failure, DDoS attack.",
+        },
+        {
+          id: 104,
+          session: 18,
+          text: "Khi cấu hình sao lưu định kỳ, yếu tố nào cần ưu tiên để đảm bảo an toàn dữ liệu?",
+          options: [
+            "Giảm dung lượng bản sao lưu để tiết kiệm bộ nhớ",
+            "Thực hiện sao lưu chỉ một lần mỗi năm",
+            "Tắt mã hóa để tăng tốc độ sao lưu",
+            "Lưu trữ bản sao lưu ở vị trí khác biệt với hệ thống chính",
+          ],
+          correctAnswer: 3,
+          explanation:
+            "Rule 3-2-1 backup: 3 copies of data, 2 different media types, 1 copy offsite. Offsite backup bảo vệ khỏi physical disaster (fire, flood, theft) tại primary location.",
+        },
+        {
+          id: 105,
+          session: 18,
+          text: "Hệ thống giám sát cảnh báo dung lượng CPU đạt mức 95%. Biện pháp xử lý hợp lý đầu tiên là:",
+          options: [
+            "Ngắt hoàn toàn kết nối Internet",
+            "Xóa tất cả tài khoản người dùng trong hệ thống",
+            "Kiểm tra tiến trình đang tiêu tốn tài nguyên và tối ưu hoặc dừng tiến trình đó",
+            "Thay đổi toàn bộ địa chỉ IP của máy chủ",
+          ],
+          correctAnswer: 2,
+          explanation:
+            "Cần xác định process nào chiếm CPU: 1) Use Task Manager (Windows) or top/htop (Linux); 2) Check if legitimate process or malware; 3) Optimize, kill, or schedule process; 4) Consider scaling up/out.",
+        },
+        {
+          id: 106,
+          session: 18,
+          text: "Khi hệ thống giám sát phát hiện nhiều đăng nhập thất bại từ cùng một địa chỉ IP, biện pháp phù hợp là:",
+          options: [
+            "Chặn tạm thời IP nghi ngờ và kiểm tra log để phát hiện nguyên nhân",
+            "Tắt dịch vụ sao lưu tự động của máy chủ",
+            "Đổi tên miền của toàn bộ hệ thống nội bộ",
+            "Giảm độ dài mật khẩu để nhân viên dễ đăng nhập",
+          ],
+          correctAnswer: 0,
+          explanation:
+            "Đây là dấu hiệu brute-force attack. Biện pháp: 1) Block IP tại firewall; 2) Check logs for attack pattern; 3) Implement account lockout policy; 4) Enable 2FA; 5) Consider fail2ban.",
+        },
+        {
+          id: 107,
+          session: 18,
+          text: "Khi triển khai hệ thống giám sát, lợi ích lớn nhất của việc thiết lập cảnh báo tự động là:",
+          options: [
+            "Giúp phát hiện sự cố sớm và xử lý kịp thời trước khi hệ thống ngừng hoạt động",
+            "Giảm nhu cầu bảo trì phần cứng định kỳ",
+            "Tăng tốc độ truyền tải trong mạng LAN",
+            "Loại bỏ hoàn toàn lỗi của người dùng",
+          ],
+          correctAnswer: 0,
+          explanation:
+            "Automated alerts: 1) Proactive problem detection; 2) Reduce mean time to repair (MTTR); 3) 24/7 monitoring; 4) Escalation policies; 5) Historical data for trend analysis.",
+        },
+        {
+          id: 108,
+          session: 18,
+          text: "Một máy khách không thể truy cập Internet trong khi các máy khác vẫn hoạt động bình thường. Nguyên nhân hợp lý nhất là:",
+          options: [
+            "Địa chỉ IP của máy khách chưa được cấp phát hoặc cấu hình sai",
+            "Router của mạng nội bộ bị hỏng hoàn toàn",
+            "Dịch vụ DNS trên toàn mạng bị ngừng hoạt động",
+            "ISP gặp sự cố toàn hệ thống",
+          ],
+          correctAnswer: 0,
+          explanation:
+            "Khi chỉ 1 client có vấn đề: 1) Check IP configuration (ipconfig /all); 2) Ping gateway; 3) Check DNS (nslookup); 4) Check firewall on client; 5) Check network cable/connection.",
+        },
+        // Buổi 19: Câu 109-114
+        {
+          id: 109,
+          session: 19,
+          text: "Hệ thống ghi log cho thấy nhiều gói tin ICMP đến từ cùng một địa chỉ IP. Đây có thể là dấu hiệu của:",
+          options: [
+            "Lỗi phần cứng trên switch",
+            "Ping flood – tấn công DDoS dạng ICMP",
+            "Mất kết nối cục bộ ở tầng vật lý",
+            "Xung đột VLAN",
+          ],
+          correctAnswer: 1,
+          explanation:
+            "Ping flood (ICMP flood) là DDoS attack gửi rất nhiều ICMP Echo Request (ping) đến target, làm quá tải bandwidth/resources. Cần block IP source tại firewall và consider rate limiting.",
+        },
+        {
+          id: 110,
+          session: 19,
+          text: "Sau khi nâng cấp phần mềm firewall, người dùng báo không truy cập được ứng dụng nội bộ. Nguyên nhân có khả năng nhất là:",
+          options: [
+            "DNS nội bộ bị vô hiệu hóa hoàn toàn",
+            "Firewall chặn cổng hoặc giao thức mà ứng dụng cần sử dụng",
+            "Địa chỉ IP máy chủ bị đổi",
+            "Mất nguồn điện đột ngột trên router",
+          ],
+          correctAnswer: 1,
+          explanation:
+            "Firewall upgrade có thể reset rules hoặc apply default policy (deny all). Cần: 1) Check firewall logs for blocked traffic; 2) Verify application ports/protocols; 3) Create appropriate allow rules.",
+        },
+        {
+          id: 111,
+          session: 19,
+          text: "Một doanh nghiệp có 50 host trong cùng một subnet. Subnet mask tối ưu nhất để tránh lãng phí IP là:",
+          options: ["/24", "/25", "/26", "/28"],
+          correctAnswer: 2,
+          explanation:
+            "/26 mask = 255.255.255.192, cung cấp 64 total IPs, 62 usable hosts (64-2). /25 cung cấp 126 usable (quá nhiều), /28 chỉ 14 usable (không đủ).",
+        },
+        {
+          id: 112,
+          session: 19,
+          text: "Trong mạng LAN, khi cấu hình VLAN nhưng các máy khác VLAN không thể liên lạc, nguyên nhân là:",
+          options: [
+            "Chưa cấu hình trunking trên cổng kết nối giữa các switch",
+            "IP của các máy trùng nhau",
+            "Gateway bị lỗi",
+            "DNS nội bộ chưa hoạt động",
+          ],
+          correctAnswer: 0,
+          explanation:
+            "Inter-VLAN communication cần: 1) Trunk port giữa switches (dot1q/ISL); 2) Router hoặc Layer 3 switch làm inter-VLAN routing; 3) Các host phải có default gateway set đúng.",
+        },
+        {
+          id: 113,
+          session: 19,
+          text: "Trong log giám sát phát hiện nhiều gói tin truy cập trái phép vào cổng 3389. Điều này cho thấy:",
+          options: [
+            "Hệ thống firewall đang bị lỗi phần cứng",
+            "DHCP server bị ngắt đột ngột",
+            "Có nỗ lực tấn công brute-force vào dịch vụ Remote Desktop",
+            "RAID controller bị xung đột firmware",
+          ],
+          correctAnswer: 2,
+          explanation:
+            "Port 3389 là Remote Desktop Protocol (RDP). Nhiều connection attempts đến port này thường là brute-force attack. Biện pháp: 1) Change RDP port; 2) Use RD Gateway; 3) Implement Network Level Authentication; 4) Use VPN instead of direct RDP.",
+        },
+        {
+          id: 114,
+          session: 19,
+          text: "Trong Packet Tracer, khi một máy không thể ping ra Internet, nhưng ping nội bộ thành công, nguyên nhân có thể là:",
+          options: [
+            "Cấu hình default gateway chưa đúng",
+            "VLAN trên switch bị tắt",
+            "Địa chỉ MAC của router bị trùng",
+            "Tường lửa của máy khách chặn ICMP",
+          ],
+          correctAnswer: 0,
+          explanation:
+            "Nếu ping local thành công nhưng không ra Internet: 1) Check default gateway IP trên client; 2) Verify router có route đến Internet; 3) Check NAT trên router; 4) Check ISP connection.",
+        },
+        // Buổi 20: Câu 115-121
+        {
+          id: 115,
+          session: 20,
+          text: "Hệ thống email thường xuyên bị liệt kê trong danh sách spam quốc tế. Biện pháp bền vững nhất là:",
+          options: [
+            "Cấu hình SPF, DKIM, DMARC và quét bảo mật máy chủ thường xuyên",
+            "Chặn tất cả email gửi ra ngoài",
+            "Giảm dung lượng hộp thư cho toàn bộ nhân viên",
+            "Tắt dịch vụ IMAP và POP3",
+          ],
+          correctAnswer: 0,
+          explanation:
+            "Để tránh blacklisting: 1) Proper SPF, DKIM, DMARC records; 2) Secure server (no open relays); 3) Regular security audits; 4) Monitor sending reputation; 5) Implement feedback loops với ESPs.",
+        },
+        {
+          id: 116,
+          session: 20,
+          text: "Một công ty nhỏ muốn triển khai sao lưu dữ liệu với chi phí hợp lý và khả năng khôi phục nhanh. Giải pháp phù hợp nhất là:",
+          options: [
+            "Sử dụng NAS nội bộ kết hợp sao lưu đám mây định kỳ",
+            "Đầu tư hệ thống lưu trữ SAN quy mô lớn",
+            "Sao lưu thủ công bằng USB hàng tuần",
+            "Chỉ lưu dữ liệu quan trọng trên máy cá nhân",
+          ],
+          correctAnswer: 0,
+          explanation:
+            "NAS + Cloud backup cung cấp: 1) Local backup nhanh (NAS); 2) Offsite backup an toàn (Cloud); 3) Versioning; 4) Cost-effective cho SMB; 5) Tự động hóa backup schedule.",
+        },
+        {
+          id: 117,
+          session: 20,
+          text: "Để đảm bảo tính sẵn sàng cao của hệ thống, biện pháp nào nên được ưu tiên?",
+          options: [
+            "Sử dụng duy nhất một máy chủ chính với dung lượng lớn",
+            "Triển khai cơ chế High Availability (HA) và giám sát liên tục",
+            "Tắt tất cả tính năng bảo mật để giảm tải",
+            "Chỉ phụ thuộc vào bản sao lưu định kỳ hàng tháng",
+          ],
+          correctAnswer: 1,
+          explanation:
+            "High Availability bao gồm: 1) Redundancy (servers, network, storage); 2) Failover clustering; 3) Load balancing; 4) Monitoring với automated failover; 5) Disaster Recovery plan.",
+        },
+        {
+          id: 118,
+          session: 20,
+          text: "Khi doanh nghiệp tăng nhanh số lượng người dùng, yếu tố nào cần đánh giá trước tiên để nâng cấp hạ tầng?",
+          options: [
+            "Băng thông mạng, dung lượng lưu trữ và khả năng mở rộng của máy chủ",
+            "Thay đổi toàn bộ hệ điều hành người dùng",
+            "Giảm tốc độ kết nối để cân bằng tải",
+            "Tắt công cụ giám sát hệ thống để tiết kiệm tài nguyên",
+          ],
+          correctAnswer: 0,
+          explanation:
+            "Khi scaling up: 1) Network bandwidth (upgrade links, implement QoS); 2) Storage capacity (SAN/NAS expansion); 3) Server scalability (vertical/horizontal scaling); 4) License considerations.",
+        },
+        {
+          id: 119,
+          session: 20,
+          text: "Hệ thống SCADA của nhà máy bị nhiễm phần mềm độc hại. Giải pháp khẩn cấp nhất để hạn chế thiệt hại là:",
+          options: [
+            "Tăng công suất máy chủ điều khiển",
+            "Thay toàn bộ dây mạng trong nhà máy",
+            "Tắt hệ thống cảnh báo tự động",
+            "Ngắt kết nối hệ thống khỏi mạng, cô lập vùng bị tấn công và quét độc hại",
+          ],
+          correctAnswer: 3,
+          explanation:
+            "Với SCADA/OT systems: 1) Immediately disconnect from network (air gap); 2) Isolate affected systems; 3) Perform malware scan/removal; 4) Restore from clean backups; 5) Investigate infection vector.",
+        },
+        {
+          id: 120,
+          session: 20,
+          text: "Một doanh nghiệp muốn tách mạng văn phòng và mạng khách để tăng bảo mật. Giải pháp phù hợp nhất là:",
+          options: [
+            "Dùng địa chỉ IP tĩnh cho tất cả máy khách",
+            "Tắt toàn bộ dịch vụ DNS",
+            "Sử dụng VLAN và ACL trên switch",
+            "Giảm công suất phát Wi-Fi",
+          ],
+          correctAnswer: 2,
+          explanation:
+            "Guest network isolation: 1) Separate VLAN cho guest Wi-Fi; 2) ACL trên router/switch để chặn access vào internal network; 3) Captive portal cho authentication; 4) Bandwidth limiting cho guest.",
+        },
+        {
+          id: 121,
+          session: 20,
+          text: "Một tổ chức tài chính cần tuân thủ nghiêm ngặt các tiêu chuẩn bảo mật quốc tế (ISO 27001). Bước đầu tiên quan trọng nhất là:",
+          options: [
+            "Tắt firewall để kiểm tra tốc độ hệ thống",
+            "Giảm số lượng người dùng trên hệ thống",
+            "Đánh giá rủi ro và xây dựng chính sách an toàn thông tin phù hợp",
+            "Cài đặt phần mềm văn phòng phiên bản mới nhất",
+          ],
+          correctAnswer: 2,
+          explanation:
+            "ISO 27001 implementation: 1) Risk assessment; 2) Develop ISMS (Information Security Management System); 3) Define security policies/procedures; 4) Implement controls; 5) Regular audits/reviews; 6) Continuous improvement.",
+        },
+      ];
+
+      // ========== BIẾN TOÀN CỤC ==========
+      let currentQuestion = 0;
+      let userAnswers = new Array(121).fill(null);
+      let questionStatus = new Array(121).fill("unanswered"); // 'unanswered', 'correct', 'incorrect'
+      let timer = 0;
+      let timerInterval;
+
+      // ========== KHỞI TẠO ỨNG DỤNG ==========
+      function init() {
+        createQuestionButtons();
+        displayQuestion(0);
+        startTimer();
+        updateStats();
+
+        // Sự kiện
+        document
+          .getElementById("prev-btn")
+          .addEventListener("click", prevQuestion);
+        document
+          .getElementById("next-btn")
+          .addEventListener("click", nextQuestion);
+        document
+          .getElementById("submit-btn")
+          .addEventListener("click", submitQuiz);
+        document
+          .getElementById("reset-btn")
+          .addEventListener("click", resetQuiz);
+        document
+          .getElementById("session-select")
+          .addEventListener("change", filterQuestions);
+        document
+          .getElementById("review-btn")
+          .addEventListener("click", reviewQuiz);
+        document
+          .getElementById("modal-restart-btn")
+          .addEventListener("click", () => {
+            document.getElementById("result-modal").style.display = "none";
+            resetQuiz();
+          });
+        document
+          .getElementById("close-modal-btn")
+          .addEventListener("click", () => {
+            document.getElementById("result-modal").style.display = "none";
+          });
+      }
+
+      // ========== TẠO NÚT CÂU HỎI ==========
+      function createQuestionButtons() {
+        const nav = document.getElementById("question-nav");
+        nav.innerHTML = "";
+
+        for (let i = 0; i < 121; i++) {
+          const btn = document.createElement("button");
+          btn.className = "q-btn";
+          btn.textContent = i + 1;
+          btn.dataset.index = i;
+
+          btn.addEventListener("click", () => {
+            currentQuestion = i;
+            displayQuestion(i);
+            updateQuestionButtons();
+          });
+
+          nav.appendChild(btn);
+        }
+        updateQuestionButtons();
+      }
+
+      // ========== HIỂN THỊ CÂU HỎI ==========
+      function displayQuestion(index) {
+        const q = questions[index];
+
+        document.getElementById(
+          "question-number"
+        ).textContent = `Câu hỏi ${q.id}`;
+        document.getElementById("question-text").textContent = q.text;
+
+        const optionsContainer = document.getElementById("options-container");
+        optionsContainer.innerHTML = "";
+
+        const letters = ["A", "B", "C", "D"];
+
+        q.options.forEach((option, i) => {
+          const optDiv = document.createElement("div");
+          optDiv.className = "option";
+          if (userAnswers[index] === i) optDiv.classList.add("selected");
+          if (userAnswers[index] !== null) {
+            if (i === q.correctAnswer) optDiv.classList.add("correct-opt");
+            else if (userAnswers[index] === i && i !== q.correctAnswer)
+              optDiv.classList.add("wrong-opt");
+          }
+
+          optDiv.innerHTML = `<strong>${letters[i]}.</strong> ${option}`;
+
+          if (userAnswers[index] === null) {
+            optDiv.addEventListener("click", () => selectAnswer(i));
+          }
+
+          optionsContainer.appendChild(optDiv);
+        });
+
+        // Hiển thị giải thích nếu đã trả lời
+        const expDiv = document.getElementById("explanation");
+        if (userAnswers[index] !== null) {
+          expDiv.classList.add("show");
+          document.getElementById("explanation-text").textContent =
+            q.explanation;
+          document.getElementById("correct-answer-text").textContent = `${
+            letters[q.correctAnswer]
+          }. ${q.options[q.correctAnswer]}`;
+        } else {
+          expDiv.classList.remove("show");
+        }
+
+        updateNavigation();
+      }
+
+      // ========== CHỌN ĐÁP ÁN ==========
+      function selectAnswer(answerIndex) {
+        const q = questions[currentQuestion];
+        userAnswers[currentQuestion] = answerIndex;
+
+        if (answerIndex === q.correctAnswer) {
+          questionStatus[currentQuestion] = "correct";
+        } else {
+          questionStatus[currentQuestion] = "incorrect";
+        }
+
+        displayQuestion(currentQuestion);
+        updateQuestionButtons();
+        updateStats();
+
+        // Tự động chuyển câu sau 2 giây
+        setTimeout(() => {
+          if (currentQuestion < 120) nextQuestion();
+        }, 2000);
+      }
+
+      // ========== CẬP NHẬT NÚT CÂU HỎI ==========
+      function updateQuestionButtons() {
+        const buttons = document.querySelectorAll(".q-btn");
+        buttons.forEach((btn, i) => {
+          btn.classList.remove("current", "answered", "correct", "incorrect");
+
+          if (i === currentQuestion) btn.classList.add("current");
+          if (userAnswers[i] !== null) {
+            btn.classList.add("answered");
+            if (questionStatus[i] === "correct") btn.classList.add("correct");
+            else if (questionStatus[i] === "incorrect")
+              btn.classList.add("incorrect");
+          }
+        });
+      }
+
+      // ========== CẬP NHẬT THỐNG KÊ ==========
+      function updateStats() {
+        const correct = questionStatus.filter((s) => s === "correct").length;
+        const incorrect = questionStatus.filter(
+          (s) => s === "incorrect"
+        ).length;
+        const answered = userAnswers.filter((a) => a !== null).length;
+
+        document.getElementById("correct-count").textContent = correct;
+        document.getElementById("incorrect-count").textContent = incorrect;
+        document.getElementById("answered-count").textContent = answered;
+      }
+
+      // ========== ĐIỀU HƯỚNG ==========
+      function prevQuestion() {
+        if (currentQuestion > 0) {
+          currentQuestion--;
+          displayQuestion(currentQuestion);
+          updateQuestionButtons();
+        }
+      }
+
+      function nextQuestion() {
+        if (currentQuestion < 120) {
+          currentQuestion++;
+          displayQuestion(currentQuestion);
+          updateQuestionButtons();
+        }
+      }
+
+      function updateNavigation() {
+        document.getElementById("prev-btn").disabled = currentQuestion === 0;
+        document.getElementById("next-btn").disabled = currentQuestion === 120;
+      }
+
+      // ========== BỘ ĐẾM THỜI GIAN ==========
+      function startTimer() {
+        timerInterval = setInterval(() => {
+          timer++;
+          const min = Math.floor(timer / 60)
+            .toString()
+            .padStart(2, "0");
+          const sec = (timer % 60).toString().padStart(2, "0");
+          document.getElementById("time").textContent = `${min}:${sec}`;
+        }, 1000);
+      }
+
+      // ========== LỌC CÂU HỎI ==========
+      function filterQuestions() {
+        const session = document.getElementById("session-select").value;
+        const buttons = document.querySelectorAll(".q-btn");
+
+        if (session === "all") {
+          buttons.forEach((btn) => (btn.style.display = "block"));
+        } else {
+          const sessionNum = parseInt(session);
+          buttons.forEach((btn, i) => {
+            if (questions[i].session === sessionNum) {
+              btn.style.display = "block";
+            } else {
+              btn.style.display = "none";
+            }
+          });
+        }
+      }
+
+      // ========== NỘP BÀI ==========
+      function submitQuiz() {
+        clearInterval(timerInterval);
+
+        const correct = questionStatus.filter((s) => s === "correct").length;
+        const incorrect = questionStatus.filter(
+          (s) => s === "incorrect"
+        ).length;
+        const unanswered = 121 - (correct + incorrect);
+
+        document.getElementById("final-score").textContent = `${correct}/121`;
+        document.getElementById("final-correct").textContent = correct;
+        document.getElementById("final-incorrect").textContent = incorrect;
+        document.getElementById("final-unanswered").textContent = unanswered;
+
+        let message = "";
+        const percent = (correct / 121) * 100;
+        if (percent >= 80) message = "Xuất sắc! Bạn đã nắm vững kiến thức.";
+        else if (percent >= 60)
+          message = "Khá tốt! Kiến thức cơ bản vững vàng.";
+        else if (percent >= 40)
+          message = "Cần cố gắng thêm! Ôn tập lại kiến thức.";
+        else message = "Hãy học lại từ đầu để nắm vững kiến thức nền tảng.";
+
+        document.getElementById("result-message").textContent = message;
+        document.getElementById("result-modal").style.display = "flex";
+      }
+
+      // ========== LÀM LẠI ==========
+      function resetQuiz() {
+        if (
+          confirm(
+            "Bạn có chắc muốn làm lại từ đầu? Tất cả câu trả lời sẽ bị xóa."
+          )
+        ) {
+          currentQuestion = 0;
+          userAnswers = new Array(121).fill(null);
+          questionStatus = new Array(121).fill("unanswered");
+
+          clearInterval(timerInterval);
+          timer = 0;
+          document.getElementById("time").textContent = "00:00";
+          startTimer();
+
+          displayQuestion(0);
+          createQuestionButtons();
+          updateStats();
+        }
+      }
+
+      // ========== XEM LẠI BÀI ==========
+      function reviewQuiz() {
+        document.getElementById("result-modal").style.display = "none";
+        currentQuestion = 0;
+        displayQuestion(0);
+        updateQuestionButtons();
+      }
+
+      // ========== KHỞI CHẠY ==========
+      document.addEventListener("DOMContentLoaded", init);
+    </script>
+  </body>
+</html>
